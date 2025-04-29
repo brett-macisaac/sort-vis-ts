@@ -19,6 +19,12 @@ function App()
                         path = { "/" }
                         element = { <Sort /> }
                     />
+
+                    {/* 
+                    * Fallback route. 
+                    * TODO: make an actual 'Page not found' page. See: https://stackoverflow.com/questions/72527907/how-to-implement-a-standalone-404-page-in-react-router-6-which-is-not-tied-to-an
+                    */}
+                    <Route path = "*" element = { <Sort /> } />
                 </Routes>
             </Router>
 
