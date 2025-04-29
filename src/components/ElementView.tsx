@@ -1,10 +1,10 @@
 import { useMemo, CSSProperties, memo } from "react";
 import  { useTheme } from "../standard_ui/standard_ui";
-import { Element } from "../pages/sort/Elements";
+import { SortElement } from "../pages/sort/Elements";
 
 interface PropsElementView
 {
-    prElement: Element;
+    prElement: SortElement;
     prLengthOuter: number;
     prLengthOuterStatic: number | string;
     prLengthInnerStatic: number | string;

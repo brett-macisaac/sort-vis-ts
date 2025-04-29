@@ -1,4 +1,4 @@
-import React, { useMemo, memo, CSSProperties, ReactElement, useCallback } from "react";
+import React, { useMemo, memo, CSSProperties, ReactElement, useCallback, JSX } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { NavButtonProps, PopUpProps, IconFuncMultiColour, Orientation } from '../../types';
