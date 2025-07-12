@@ -78,7 +78,7 @@ function Sort({})
         {
             if (!(rfIsSorting.current))
             {
-                console.log("Start sort");
+                // console.log("Start sort");
 
                 rfIsSorting.current = true;
                 rfIsPaused.current = false;
@@ -91,7 +91,7 @@ function Sort({})
             {
                 rfIsPaused.current = true;
                 rfReRender.current();
-                console.log(rfIsPaused.current ? "Pause" : "Resume");
+                // console.log(rfIsPaused.current ? "Pause" : "Resume");
                 return;
             }
             else
@@ -115,8 +115,8 @@ function Sort({})
 
             let lSortActions = rfElements.current.sortActions;
             let lLengthSortActions = rfElements.current.lengthSortActions;
-            console.log(lSortActions);
-            console.log(lLengthSortActions);
+            // console.log(lSortActions);
+            // console.log(lLengthSortActions);
 
             let lSkipPrev = false;
 
@@ -269,7 +269,7 @@ function Sort({})
 
             rfReRender.current();
 
-            console.log("End sort");
+            // console.log("End sort");
         },
         [ stIndexSelectedSortAlgo, stIsAscending ]
     );
@@ -279,7 +279,7 @@ function Sort({})
         {
             if (rfIsPaused.current)
             {
-                console.log("Pause until clicks");
+                // console.log("Pause until clicks");
 
                 const lButtons : HTMLElement[] = [];
 
@@ -300,7 +300,7 @@ function Sort({})
                     lIndexClick = await utils.sleepUntilClicks(lButtons);
                 }
 
-                console.log(lIndexClick);
+                // console.log(lIndexClick);
 
                 if (lIndexClick != 0 && lIndexClick != 1)
                 {

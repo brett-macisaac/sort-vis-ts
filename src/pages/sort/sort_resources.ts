@@ -133,10 +133,17 @@ function SelectionSort(pElements : Elements, pAscending : boolean)
     pElements.loadSnapshot();
 }
 
-function InsertionSort(pElements : Elements, pAscending : boolean)
+function insertionSort(pElements : Elements, pAscending : boolean, pIndexLow : number = -1, pIndexHigh : number = -1, pSaveLoadSnapshot : boolean = true)
 {
+    if (pIndexLow < 0)
+        pIndexLow = 0;
+
+    if (pIndexHigh < 0 || pIndexHigh >= pElements.length)
+        pIndexHigh = pElements.length - 1;
+
     // Take a snapshot of the elements.
-    pElements.saveSnapshot();
+    if (pSaveLoadSnapshot)
+        pElements.saveSnapshot();
 
     // The value to insert upon each iteration of the for-loop.
     let lValueToInsert : SortElement;
@@ -153,25 +160,16 @@ function InsertionSort(pElements : Elements, pAscending : boolean)
     * Initially, lIndexUnsortedMin is assigned the value 1, meaning that the value at index 0 is assumed to be sorted.
     * After each iteration of this for-loop, the size of the unsorted segment is reduced by 1.
     */
-    for (let lIndexUnsortedMin : number = 1; lIndexUnsortedMin < pElements.length; ++lIndexUnsortedMin)
+    for (let lIndexUnsortedMin : number = pIndexLow + 1; lIndexUnsortedMin <= pIndexHigh; ++lIndexUnsortedMin)
     {
         // The value to insert in this for-loop iteration is that at the lowest index of the array's unsorted segment.
         // lValueToInsert = pElements.GetClientHeight(lIndexUnsortedMin);
         lValueToInsert = pElements.elements[lIndexUnsortedMin];
-        
-        // Highlight the value that is to be inserted into the sorted segment.
-        // pElements.SetElementColour(lIndexUnsortedMin, pElements.colours.compared, true);
-
-        // Highlight the sorted segment.
-        // pElements.SetElementRangeColour(0, lIndexUnsortedMin - 1, pElements.colours.swapped, true);
-
-        // Remove colours.
-        // pElements.SetElementRangeColour(0, lIndexUnsortedMin, pElements.colours.default);
 
         // The index of the (sorted) sublist at which lValueToInsert will be inserted.
         let lIndexOfInsert : number = lIndexUnsortedMin;
 
-        for (; lIndexOfInsert > 0 && pElements.compareValue(lIndexOfInsert - 1, lOperator, lValueToInsert.value); 
+        for (; lIndexOfInsert > pIndexLow && pElements.compareValue(lIndexOfInsert - 1, lOperator, lValueToInsert.value); 
             --lIndexOfInsert)
         {
             pElements.setValue(lIndexOfInsert, pElements.elements[lIndexOfInsert - 1].value);
@@ -182,22 +180,13 @@ function InsertionSort(pElements : Elements, pAscending : boolean)
 
         pElements.setValue(lIndexOfInsert, lValueToInsert.value);
 
-        // Highlight the value that was inserted.
-        // pElements.SetElementColour(lIndexOfInsert, pElements.colours.compared, false);
-        
-        // Highlight the values that were shifted up to accomodate for the value that was inserted.
-        // pElements.SetElementRangeColour(lIndexOfInsert + 1, lIndexOfInsert + lNumShifts, pElements.colours.swapped, true);
-        
-        // Remove the highlights.
-        //pElements.SetBarColour(lIndexOfInsertM1 + 1, BarColourEnum.Standard, false);
-        // pElements.SetElementRangeColour(lIndexOfInsert, lIndexOfInsert + lNumShifts, pElements.colours.default, false);
-
         // Clear the number of shifts.
         lNumShifts = 0;
     }
 
     // Load the snapshot to undo the changes.
-    pElements.loadSnapshot();
+    if (pSaveLoadSnapshot)
+        pElements.loadSnapshot();
 }
 
 function QuickSort(pElements : Elements, pAscending : boolean)
@@ -403,74 +392,6 @@ function MergeSort(pElements : Elements, pAscending : boolean)
 
     const lOperator = pAscending ? "LE" : "GE";
 
-    // const lColourUpper = "#0f5099";
-    // const lColourLower = "#cc241f";
-    // const lColourMerged = "#5226a3";
-
-    const Merge = (pElements : Elements, pStart : number, pMid : number, pEnd : number) =>
-    {
-        // Change the colours of the two segments.
-        // pElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
-        // pElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
-
-        // Remove the colours.
-        // pElements.SetElementRangeColour(aStart, aEnd, pElements.colours.default, true);
-        
-        // Create a temporary container to house the merged segment.
-        const lSizeOfMerger = pEnd - pStart + 1; // Size of merged segment.
-        let lMerger = Array(lSizeOfMerger); // Array to hold the merged values of lower and upper segments.
-
-        // (a). The current indexes of the lower and upper segments, respectively.
-        let lIndexLowerSegment = pStart;
-        let lIndexUpperSegment = pEnd + 1;
-
-        // (b). The 'current' index of lMerger.
-        let lMergerIndex = 0;
-        
-        // The purpose of this while loop is to populate lMerger with all elements from lower and upper segments.
-        while (true) // (c).
-        {
-            if (lIndexLowerSegment <= pMid && lIndexUpperSegment <= pEnd) // (d).
-            {
-                if (pElements.compare(lIndexLowerSegment, lOperator, lIndexUpperSegment, false, false)) // (e).
-                {
-                    lMerger[lMergerIndex++] = pElements.elements[lIndexLowerSegment++];
-                }
-                else // (f).
-                {
-                    lMerger[lMergerIndex++] = pElements.elements[lIndexUpperSegment++];;
-                }
-                
-            }
-            else if (lIndexLowerSegment <= pMid) // (g).-=
-            {
-                lMerger[lMergerIndex++] = pElements.elements[lIndexLowerSegment++];
-            }
-            else if (lIndexUpperSegment <= pEnd) // (h).
-            {
-                lMerger[lMergerIndex++] = pElements.elements[lIndexUpperSegment++];
-            }
-            else // (i).
-            {
-                break;
-            }
-        }
-
-        // Change the colours of the two segments.
-        // pElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
-        // pElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
-
-        // Copy the values from lMerger into the appropriate indexes of pElements.
-        for (let i = pStart; i <= pEnd; ++i) 
-        { 
-            pElements.setValue(i, lMerger[i - pStart].value);
-            // pElements.SetElementColour(i, lColourMerged, true);
-        }
-        
-        // Remove the colours.
-        // pElements.SetElementRangeColour(aStart, aEnd, pElements.colours.default, false);
-    }
-
     const SplitAndMerge = (pElements : Elements, pStart : number, pEnd : number) => 
     {
         if (pStart >= pEnd)
@@ -488,7 +409,7 @@ function MergeSort(pElements : Elements, pAscending : boolean)
         SplitAndMerge(pElements, lMid + 1, pEnd);
 
         // Combine the lower (aStart to lMid) and upper (lMid + 1 to aEnd) segments which, individually, are sorted.
-        Merge(pElements, pStart, lMid, pEnd);
+        merge(pElements, pStart, lMid, pEnd, lOperator);
     }
 
     SplitAndMerge(pElements, 0, pElements.length - 1);
@@ -497,83 +418,63 @@ function MergeSort(pElements : Elements, pAscending : boolean)
     pElements.loadSnapshot();
 }
 
+function merge(pElements : Elements, pStart : number, pMid : number, pEnd : number, pOperator : CompOp)
+{
+    // Create a temporary container to house the merged segment.
+    const lSizeOfMerger : number = pEnd - pStart + 1; // Size of merged segment.
+    let lMerger : SortElement[] = Array(lSizeOfMerger); // Array to hold the merged values of lower and upper segments.
+
+    // The current indexes of the lower and upper segments, respectively.
+    let lIndexLowerSegment = pStart;
+    let lIndexUpperSegment = pMid + 1;
+
+    // The 'current' index of lMerger.
+    let lMergerIndex : number = 0;
+    
+    // The purpose of this while loop is to populate lMerger with all elements from lower and upper segments.
+    while (true)
+    {
+        if (lIndexLowerSegment <= pMid && lIndexUpperSegment <= pEnd)
+        {
+            if (pElements.compare(lIndexLowerSegment, pOperator, lIndexUpperSegment))
+            {
+                lMerger[lMergerIndex++] = pElements.elements[lIndexLowerSegment++];
+            }
+            else
+            {
+                lMerger[lMergerIndex++] = pElements.elements[lIndexUpperSegment++];
+            }
+            
+        }
+        else if (lIndexLowerSegment <= pMid)
+        {
+            lMerger[lMergerIndex++] = pElements.elements[lIndexLowerSegment++];
+        }
+        else if (lIndexUpperSegment <= pEnd)
+        {
+            lMerger[lMergerIndex++] = pElements.elements[lIndexUpperSegment++];
+        }
+        else
+        {
+            break;
+        }
+        
+    }
+
+    // Copy the values from lMerger into the appropriate indexes of pElements.
+    for (let i = pStart; i <= pEnd; ++i) 
+    { 
+        pElements.setValue(i, lMerger[i - pStart].value);
+        // pElements.SetElementColour(i, lColourMerged, true);
+    }
+}
+
 function MergeSortIterative(pElements : Elements, pAscending : boolean)
 {
     // Take a snapshot of the elements.
     pElements.saveSnapshot();
 
     const lOperator : CompOp = pAscending ? "LE" : "GE";
-
-    const lColourUpper = "#0f5099";
-    const lColourLower = "#cc241f";
-    const lColourMerged = "#5226a3";
-
-    const Merge = (pElements : Elements, pStart : number, pMid : number, pEnd : number) =>
-    {
-        // Change the colours of the two segments.
-        // pElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
-        // pElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
-
-        // if (pElements.stop) return;
-
-        // Remove the colours.
-        // pElements.SetElementRangeColour(aStart, aEnd, pElements.colours.default, true);
-        
-        // Create a temporary container to house the merged segment.
-        const lSizeOfMerger : number = pEnd - pStart + 1; // Size of merged segment.
-        let lMerger : SortElement[] = Array(lSizeOfMerger); // Array to hold the merged values of lower and upper segments.
-
-        // The current indexes of the lower and upper segments, respectively.
-        let lIndexLowerSegment = pStart;
-        let lIndexUpperSegment = pMid + 1;
-
-        // The 'current' index of lMerger.
-        let lMergerIndex : number = 0;
-        
-        // The purpose of this while loop is to populate lMerger with all elements from lower and upper segments.
-        while (true)
-        {
-            if (lIndexLowerSegment <= pMid && lIndexUpperSegment <= pEnd)
-            {
-                if (pElements.compare(lIndexLowerSegment, lOperator, lIndexUpperSegment))
-                {
-                    lMerger[lMergerIndex++] = pElements.elements[lIndexLowerSegment++];
-                }
-                else
-                {
-                    lMerger[lMergerIndex++] = pElements.elements[lIndexUpperSegment++];
-                }
-                
-            }
-            else if (lIndexLowerSegment <= pMid)
-            {
-                lMerger[lMergerIndex++] = pElements.elements[lIndexLowerSegment++];
-            }
-            else if (lIndexUpperSegment <= pEnd)
-            {
-                lMerger[lMergerIndex++] = pElements.elements[lIndexUpperSegment++];
-            }
-            else
-            {
-                break;
-            }
-            
-        }
-
-        // Change the colours of the two segments.
-        // pElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
-        // pElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
-
-        // Copy the values from lMerger into the appropriate indexes of pElements.
-        for (let i = pStart; i <= pEnd; ++i) 
-        { 
-            pElements.setValue(i, lMerger[i - pStart].value);
-            // pElements.SetElementColour(i, lColourMerged, true);
-        }
-        
-        // Remove the colours.
-        // pElements.SetElementRangeColour(aStart, aEnd, pElements.colours.default, false);
-    }
 
     let lSegmentSize : number; // Current size of segment to split and merge (range: 2 to l_max_segment_size).
     let lStart : number; // First index of segment (first index of lower half).
@@ -608,9 +509,8 @@ function MergeSortIterative(pElements : Elements, pAscending : boolean)
             }
 
             // Combine the lower (lStart to lMid) and upper (lMid + 1 to lEnd) halves of the current segment.
-            Merge(pElements, lStart, lMid, lEnd);
+            merge(pElements, lStart, lMid, lEnd, lOperator);
         }
-        
     }
 
     // Load the snapshot to undo the changes.
@@ -732,7 +632,7 @@ function ShellSort(pElements : Elements, pAscending : boolean)
 
     /*
     * Perform insertion sort on all sublists of pElements where each sublist is comprised of elements of pElements that
-    are 'gap' indexes apart from each other.
+      are 'gap' indexes apart from each other: i.e. a sublist is [ pElements[0], pElements[gap], pElements[2*gap], pElements[3*gap]... ]
     */
     for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap / 2))
     {
@@ -772,7 +672,84 @@ function ShellSort(pElements : Elements, pAscending : boolean)
     pElements.loadSnapshot();
 }
 
-// Add an algorithm which just gets the list into heap form (doesn't actually sort).
+// source: https://www.geeksforgeeks.org/dsa/timsort/
+function TimSort(pElements : Elements, pAscending : boolean)
+{
+    // Take a snapshot of the elements.
+    pElements.saveSnapshot();
+
+    /**
+     * Calculates and returns the minimum run length for the given array.
+     * See: https://en.wikipedia.org/wiki/Timsort#Minimum_run_size
+     *
+     * @returns The minimum run length for the given array.
+     */
+    const getMinRunLength = () : number =>
+    {
+        if (pElements.length <= 63)
+            return pElements.length;
+
+        const lLengthBinary : string = pElements.length.toString(2);
+
+        let lMinRunLength : number = 0;
+
+        for (let i = 0; i < lLengthBinary.length; ++i)
+        {
+            if (i < 6)
+            {
+                if (lLengthBinary[i] == "1")
+                {
+                    lMinRunLength += Math.pow(2, 5 - i);
+                }
+            }
+            else
+            {
+                if (lLengthBinary[i] == "1")
+                {
+                    lMinRunLength += 1;
+                    break;
+                }
+            }
+        }
+
+        return lMinRunLength;
+    };
+
+    let lMinRunSize : number = getMinRunLength();
+
+    const lOperator : CompOp = pAscending ? "LE" : "GE";
+
+    // Sort individual subarrays of size RUN
+    for (let i = 0; i < pElements.length; i += lMinRunSize)
+    {
+        insertionSort(pElements, pAscending, i, Math.min((i + lMinRunSize - 1), (pElements.length - 1)), false);
+    }
+
+    // Merge adjacent subarrays of size lMinRunSize, then subarrays of 2*lMinRunSize, 3*lMinRunSize, ...
+    for (let size = lMinRunSize; size < pElements.length; size = 2 * size) 
+    {
+        // Merge the sorted subarrays of size 'size'.
+        for (let left = 0; left < pElements.length; left += 2 * size) 
+        {
+            // The highest index of the left subarray.
+            let indexMid = left + size - 1;
+
+            // The highest index of the right subarray.
+            let indexRight = Math.min((left + 2 * size - 1), (pElements.length - 1));
+
+            // Merge left and right subarrays.
+            if (indexMid < indexRight)
+            {
+                merge(pElements, left, indexMid, indexRight, lOperator);
+            }
+        }
+    }
+
+    // Load the snapshot to undo the changes.
+    pElements.loadSnapshot();
+}
+
+// An algorithm which just gets the list into heap form (doesn't actually sort).
 function Heapify(pElements : Elements, pAscending : boolean)
 {
     HeapSort(pElements, pAscending, false);
@@ -790,6 +767,7 @@ const sortAlgoNames = [
     "MERGE ITERATIVE",
     "HEAP",
     "SHELL",
+    "TIM",
     "HEAPIFY"
 ];
 
@@ -797,16 +775,16 @@ const sortAlgos : { [key: string]: (pElements : Elements, pAscending : boolean) 
     "BUBBLE": BubbleSort,
     "COCKTAIL SHAKER": CocktailShakerSort,
     "SELECTION": SelectionSort,
-    "INSERTION": InsertionSort,
+    "INSERTION": insertionSort,
     "QUICK": QuickSortRandomPivot,
     // "QUICK RANDOM": QuickSortRandomPivot,
     "MERGE": MergeSort,
     "MERGE ITERATIVE": MergeSortIterative,
     "HEAP": HeapSort,
     "SHELL": ShellSort,
+    "TIM": TimSort,
     "HEAPIFY": Heapify
-}
-
+};
 
 // The ranges used for the sliders.
 const ranges = {

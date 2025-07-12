@@ -1,8 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import Sort from './pages/sort/Sort.js';
-import { ThemeProvider } from "./standard_ui/standard_ui.js";
-import { WindowSizeProvider } from "./standard_ui/standard_ui.js";
+import Sort from './pages/sort/Sort';
+import { ThemeProvider, WindowSizeProvider } from "./standard_ui/standard_ui";
 
 import './standard_ui/standard_ui.css';
 

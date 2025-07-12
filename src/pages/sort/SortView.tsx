@@ -117,14 +117,14 @@ function SortView({ prElements, prNumElements, prIndexSelectedSortAlgo, prSpeed,
             return {
                 con:
                 {
-                    height: 60, //!lIsLandScape ? "100%" : "",
-                    width: 60, //lIsLandScape ? "100%" : "",
+                    height: gSizeComboBox, //!lIsLandScape ? "100%" : "",
+                    width: gSizeComboBox, //lIsLandScape ? "100%" : "",
                     padding: 5,
                     borderRadius: gBorderRadiusGeneral,
                 }
             }
         },
-        [ lIsLandScape ]
+        []
     );
 
     const lStyleBtnAction = useMemo<StylesButtonStd>(
@@ -152,7 +152,7 @@ function SortView({ prElements, prNumElements, prIndexSelectedSortAlgo, prSpeed,
             let lGap = lSpaceAvailable * 0.04;
 
             // The size of each button along the direction that the buttons are arranged (i.e. either vertical or horizontal).
-            let lSize = (lSpaceAvailable - 2 * gPaddingConButtonsOuter - 5 * lGap - 12 * gPaddingBtnAction) / 6;
+            let lSize = (lSpaceAvailable - 2 * gPaddingGeneral - 5 * lGap - 12 * gPaddingBtnAction) / 6;
 
             // Make sure the size is between the min and max.
             lSize = lSize > 150 ? 150 : lSize;
